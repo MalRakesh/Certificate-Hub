@@ -4,14 +4,15 @@ const certificates = [
     id: "html-offline",
     title: "HTML & CSS Mastery",
     issuer: "Raj Computers Academy",
-    category: "offline", // ← key for filtering
+    category: "offline",
     platform: "Offline Training",
     date: "Jan 2024",
     hours: "40 hours",
     verified: true,
     skills: ["HTML5", "CSS3", "Responsive Design"],
     image: "assets/certs/html-offline.jpg",
-    pdf: "assets/certs/html-offline.pdf",
+    pdf: "assets/certs/html-offline.pdf"
+    // No verifyUrl → Verify button won't show
   },
   {
     id: "coursera-emails",
@@ -27,6 +28,7 @@ const certificates = [
     pdf: "assets/certs/coursera-emails.pdf",
     rating: "4.8",
     enrolled: "1M+",
+    verifyUrl: "https://coursera.org/verify/ABC123XYZ" // 👈 Add this
   },
   {
     id: "udemy-js",
@@ -39,6 +41,7 @@ const certificates = [
     skills: ["JavaScript", "DOM", "ES6"],
     image: "assets/certs/udemy-js.jpg",
     pdf: "assets/certs/udemy-js.pdf",
+    verifyUrl: "https://www.udemy.com/certificate/UC-XXXXXX/" // 👈 Add this
   },
   {
     id: "hackathon-ai",
@@ -50,7 +53,6 @@ const certificates = [
     verified: true,
     skills: ["Python", "AI", "Teamwork"],
     image: "assets/certs/hackathon-ai.jpg",
-    pdf: "assets/certs/hackathon-ai.pdf",
-  },
-  // Add more...
+    pdf: "assets/certs/hackathon-ai.pdf"
+  }
 ];

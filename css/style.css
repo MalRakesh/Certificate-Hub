@@ -377,3 +377,12 @@ footer {
     align-items: center;
   }
 }
+
+.btn-verify {
+  background: transparent;
+  color: var(--verified);
+  border: 2px solid var(--verified);
+}
+.btn-verify:hover {
+  background: rgba(0, 200, 150, 0.1);
+}

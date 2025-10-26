@@ -1,6 +1,6 @@
 // js/main.js
 
-// =============== SCROLL PROGRESS ===============
+// =============== SCROLL PROGRESS + BACK TO TOP ===============
 window.addEventListener("scroll", () => {
   const winScroll =
     document.body.scrollTop || document.documentElement.scrollTop;
@@ -11,26 +11,20 @@ window.addEventListener("scroll", () => {
   const progressBar = document.getElementById("progressBar");
   if (progressBar) progressBar.style.width = scrolled + "%";
 
-  // Back to top button
   const backToTopBtn = document.getElementById("backToTop");
   if (backToTopBtn) {
-    if (window.scrollY > 300) {
-      backToTopBtn.classList.add("show");
-    } else {
-      backToTopBtn.classList.remove("show");
-    }
+    backToTopBtn.classList.toggle("show", window.scrollY > 300);
   }
 });
 
 // =============== MOBILE NAV ===============
 document.getElementById("hamburger")?.addEventListener("click", () => {
-  document.querySelector(".nav-links").classList.toggle("active");
+  document.querySelector(".nav-links")?.classList.toggle("active");
 });
 
-// =============== THEME TOGGLE (URL-BASED, NO localStorage) ===============
+// =============== THEME SYSTEM (URL-BASED, NO localStorage) ===============
 function getThemeFromURL() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("theme");
+  return new URLSearchParams(window.location.search).get("theme");
 }
 
 function setThemeInURL(theme) {
@@ -53,39 +47,44 @@ function updateThemeIcon(isDark) {
   const toggle = document.getElementById("themeToggle");
   if (!toggle) return;
 
-  // Clear existing
   toggle.innerHTML = "";
-
-  // Add single icon
   const icon = document.createElement("i");
   icon.className = isDark ? "fas fa-sun" : "fas fa-moon";
   toggle.appendChild(icon);
 }
 
-// Apply theme on load
-const urlTheme = getThemeFromURL();
-const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-const finalTheme = urlTheme || (systemDark && !urlTheme ? "dark" : "light");
-applyTheme(finalTheme);
+// Initialize theme on load
+(() => {
+  const urlTheme = getThemeFromURL();
+  const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const finalTheme = urlTheme || (systemDark && !urlTheme ? "dark" : "light");
+  applyTheme(finalTheme);
+})();
 
-// Toggle theme
-document.getElementById("themeToggle")?.addEventListener("click", () => {
-  const current =
-    getThemeFromURL() || (systemDark && !urlTheme ? "dark" : "light");
-  const newTheme = current === "dark" ? "light" : "dark";
-  setThemeInURL(newTheme);
-  applyTheme(newTheme);
+// Toggle theme on click (works every time)
+document.addEventListener("click", (e) => {
+  if (e.target.closest("#themeToggle")) {
+    const current =
+      getThemeFromURL() ||
+      (window.matchMedia("(prefers-color-scheme: dark)").matches &&
+      !getThemeFromURL()
+        ? "dark"
+        : "light");
+    const newTheme = current === "dark" ? "light" : "dark";
+    setThemeInURL(newTheme);
+    applyTheme(newTheme);
+  }
 });
 
-// =============== AUTO-LINK THEME PRESERVATION ===============
+// Preserve theme in internal links
 document.querySelectorAll("a[href]").forEach((link) => {
   if (
     link.hostname === window.location.hostname &&
     !link.classList.contains("no-theme")
   ) {
-    link.addEventListener("click", function (e) {
-      const currentTheme = getThemeFromURL();
-      if (currentTheme === "dark") {
+    link.addEventListener("click", function () {
+      const theme = getThemeFromURL();
+      if (theme === "dark") {
         const url = new URL(this.href);
         url.searchParams.set("theme", "dark");
         this.href = url.toString();
@@ -94,64 +93,19 @@ document.querySelectorAll("a[href]").forEach((link) => {
   }
 });
 
-// =============== CERTIFICATE RENDERING (Home Page) ===============
-const homeContainer = document.querySelector(".certificates-grid");
-if (homeContainer && typeof certificates !== "undefined") {
-  certificates.slice(0, 4).forEach((cert) => {
-    const card = createCertCard(cert);
-    homeContainer.appendChild(card);
-  });
-}
-
-// =============== CERTIFICATE FILTERING (Certificates Page) ===============
-const certContainer = document.getElementById("certContainer");
-if (certContainer && typeof certificates !== "undefined") {
-  renderCertificates("all");
-
-  document.querySelectorAll(".filter-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      document
-        .querySelectorAll(".filter-btn")
-        .forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      const category = btn.dataset.category;
-      renderCertificates(category);
-    });
-  });
-}
-
-function renderCertificates(category) {
-  certContainer.innerHTML = "";
-  const filtered =
-    category === "all"
-      ? certificates
-      : certificates.filter((c) => c.category === category);
-
-  if (filtered.length === 0) {
-    certContainer.innerHTML = `<p style="text-align:center; padding:2rem; color:var(--text-light)">No certificates found.</p>`;
-    return;
-  }
-
-  filtered.forEach((cert) => {
-    const card = createCertCard(cert);
-    certContainer.appendChild(card);
-  });
-}
-
+// =============== CREATE CERTIFICATE CARD ===============
 function createCertCard(cert) {
   const card = document.createElement("div");
   card.className = "cert-card";
+
   const skillsHtml = cert.skills
-    .map((skill) => `<span class="skill-tag">${skill}</span>`)
+    .map((s) => `<span class="skill-tag">${s}</span>`)
     .join("");
 
-  const ratingHtml =
-    cert.rating || cert.enrolled
-      ? `<div style="margin:10px 0;color:var(--text-light);">
-        ${cert.rating ? `<span>⭐ ${cert.rating}</span>` : ""}
-        ${cert.enrolled ? `<span> | 📚 ${cert.enrolled} enrolled</span>` : ""}
-       </div>`
-      : "";
+  // Verify button (only if verifyUrl exists)
+  const verifyBtn = cert.verifyUrl
+    ? `<a href="${cert.verifyUrl}" target="_blank" class="btn btn-verify">Verify</a>`
+    : "";
 
   card.innerHTML = `
     <div class="cert-info">
@@ -164,11 +118,11 @@ function createCertCard(cert) {
           ? `<div class="hours">${cert.hours} (approximately)</div>`
           : ""
       }
-      ${cert.verified ? `<div class="verified-badge">✅ Verified</div>` : ""}
-      ${ratingHtml}
+      ${cert.verified ? `<div class="verified-badge">Verified</div>` : ""}
       <div class="skills">${skillsHtml}</div>
       <div class="actions">
         <a href="${cert.pdf}" download class="btn btn-download">Download</a>
+        ${verifyBtn}
         <button class="btn btn-share" onclick="shareCert('${
           cert.id
         }')">Share</button>
@@ -186,12 +140,51 @@ function shareCert(id) {
   const url = `${window.location.origin}${window.location.pathname}?theme=${
     getThemeFromURL() || "light"
   }#${id}`;
-  navigator.clipboard.writeText(url).then(() => {
-    alert("Certificate link copied to clipboard!");
+  navigator.clipboard
+    .writeText(url)
+    .then(() => alert("Link copied to clipboard!"))
+    .catch(() => prompt("Copy this link:", url));
+}
+
+// =============== HOME PAGE (Preview) ===============
+const homeGrid = document.querySelector(".certificates-grid");
+if (homeGrid && typeof certificates !== "undefined") {
+  certificates.slice(0, 4).forEach((cert) => {
+    homeGrid.appendChild(createCertCard(cert));
   });
 }
 
-// =============== BACK TO TOP ===============
+// =============== CERTIFICATES PAGE (Filterable) ===============
+const certContainer = document.getElementById("certContainer");
+if (certContainer && typeof certificates !== "undefined") {
+  function render(category) {
+    certContainer.innerHTML = "";
+    const list =
+      category === "all"
+        ? certificates
+        : certificates.filter((c) => c.category === category);
+
+    if (list.length === 0) {
+      certContainer.innerHTML = `<p style="text-align:center;padding:2rem;color:var(--text-light)">No certificates found.</p>`;
+      return;
+    }
+    list.forEach((cert) => certContainer.appendChild(createCertCard(cert)));
+  }
+
+  render("all");
+
+  document.querySelectorAll(".filter-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document
+        .querySelectorAll(".filter-btn")
+        .forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      render(btn.dataset.category);
+    });
+  });
+}
+
+// =============== BACK TO TOP CLICK ===============
 document.getElementById("backToTop")?.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
