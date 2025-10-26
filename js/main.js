@@ -1,28 +1,6 @@
 // js/main.js
 
-// =============== SCROLL PROGRESS + BACK TO TOP ===============
-window.addEventListener("scroll", () => {
-  const winScroll =
-    document.body.scrollTop || document.documentElement.scrollTop;
-  const height =
-    document.documentElement.scrollHeight -
-    document.documentElement.clientHeight;
-  const scrolled = (winScroll / height) * 100;
-  const progressBar = document.getElementById("progressBar");
-  if (progressBar) progressBar.style.width = scrolled + "%";
-
-  const backToTopBtn = document.getElementById("backToTop");
-  if (backToTopBtn) {
-    backToTopBtn.classList.toggle("show", window.scrollY > 300);
-  }
-});
-
-// =============== MOBILE NAV ===============
-document.getElementById("hamburger")?.addEventListener("click", () => {
-  document.querySelector(".nav-links")?.classList.toggle("active");
-});
-
-// =============== THEME SYSTEM (URL-BASED, NO localStorage) ===============
+// =============== UTILS ===============
 function getThemeFromURL() {
   return new URLSearchParams(window.location.search).get("theme");
 }
@@ -47,22 +25,25 @@ function updateThemeIcon(isDark) {
   const toggle = document.getElementById("themeToggle");
   if (!toggle) return;
 
+  // Clear all children
   toggle.innerHTML = "";
+
+  // Add single icon
   const icon = document.createElement("i");
   icon.className = isDark ? "fas fa-sun" : "fas fa-moon";
   toggle.appendChild(icon);
 }
 
-// Initialize theme on load
-(() => {
+// =============== INIT THEME ON EVERY PAGE LOAD ===============
+(function initTheme() {
   const urlTheme = getThemeFromURL();
   const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   const finalTheme = urlTheme || (systemDark && !urlTheme ? "dark" : "light");
   applyTheme(finalTheme);
 })();
 
-// Toggle theme on click (works every time)
-document.addEventListener("click", (e) => {
+// =============== TOGGLE THEME (WORKS EVERY TIME) ===============
+document.addEventListener("click", function (e) {
   if (e.target.closest("#themeToggle")) {
     const current =
       getThemeFromURL() ||
@@ -76,24 +57,49 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// Preserve theme in internal links
-document.querySelectorAll("a[href]").forEach((link) => {
-  if (
-    link.hostname === window.location.hostname &&
-    !link.classList.contains("no-theme")
-  ) {
-    link.addEventListener("click", function () {
-      const theme = getThemeFromURL();
-      if (theme === "dark") {
-        const url = new URL(this.href);
-        url.searchParams.set("theme", "dark");
-        this.href = url.toString();
-      }
-    });
-  }
+// =============== AUTO-CARRY THEME IN ALL INTERNAL LINKS ===============
+(function preserveThemeInLinks() {
+  const currentTheme = getThemeFromURL();
+  if (!currentTheme) return;
+
+  document.querySelectorAll("a[href]").forEach((link) => {
+    if (
+      link.hostname === window.location.hostname &&
+      !link.classList.contains("no-theme") &&
+      !link.href.includes("?theme=")
+    ) {
+      const url = new URL(link.href);
+      url.searchParams.set("theme", currentTheme);
+      link.href = url.toString();
+    }
+  });
+})();
+
+// =============== SCROLL + BACK TO TOP ===============
+window.addEventListener("scroll", () => {
+  const h = document.documentElement,
+    b = document.body,
+    st = "scrollTop",
+    sh = "scrollHeight";
+  const percent =
+    ((h[st] || b[st]) / ((h[sh] || b[sh]) - h.clientHeight)) * 100;
+  const bar = document.getElementById("progressBar");
+  if (bar) bar.style.width = percent + "%";
+
+  const btn = document.getElementById("backToTop");
+  if (btn) btn.classList.toggle("show", window.scrollY > 300);
 });
 
-// =============== CREATE CERTIFICATE CARD ===============
+document.getElementById("backToTop")?.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+// =============== MOBILE MENU ===============
+document.getElementById("hamburger")?.addEventListener("click", () => {
+  document.querySelector(".nav-links")?.classList.toggle("active");
+});
+
+// =============== CERT CARD RENDERING ===============
 function createCertCard(cert) {
   const card = document.createElement("div");
   card.className = "cert-card";
@@ -102,7 +108,6 @@ function createCertCard(cert) {
     .map((s) => `<span class="skill-tag">${s}</span>`)
     .join("");
 
-  // Verify button (only if verifyUrl exists)
   const verifyBtn = cert.verifyUrl
     ? `<a href="${cert.verifyUrl}" target="_blank" class="btn btn-verify">Verify</a>`
     : "";
@@ -118,7 +123,7 @@ function createCertCard(cert) {
           ? `<div class="hours">${cert.hours} (approximately)</div>`
           : ""
       }
-      ${cert.verified ? `<div class="verified-badge">Verified</div>` : ""}
+      ${cert.verified ? `<div class="verified-badge">✅ Verified</div>` : ""}
       <div class="skills">${skillsHtml}</div>
       <div class="actions">
         <a href="${cert.pdf}" download class="btn btn-download">Download</a>
@@ -135,26 +140,25 @@ function createCertCard(cert) {
   return card;
 }
 
-// =============== SHARE FUNCTION ===============
 function shareCert(id) {
   const url = `${window.location.origin}${window.location.pathname}?theme=${
     getThemeFromURL() || "light"
   }#${id}`;
   navigator.clipboard
     .writeText(url)
-    .then(() => alert("Link copied to clipboard!"))
+    .then(() => alert("Link copied!"))
     .catch(() => prompt("Copy this link:", url));
 }
 
-// =============== HOME PAGE (Preview) ===============
+// =============== HOME PAGE ===============
 const homeGrid = document.querySelector(".certificates-grid");
 if (homeGrid && typeof certificates !== "undefined") {
-  certificates.slice(0, 4).forEach((cert) => {
-    homeGrid.appendChild(createCertCard(cert));
-  });
+  certificates
+    .slice(0, 4)
+    .forEach((cert) => homeGrid.appendChild(createCertCard(cert)));
 }
 
-// =============== CERTIFICATES PAGE (Filterable) ===============
+// =============== CERTIFICATES PAGE ===============
 const certContainer = document.getElementById("certContainer");
 if (certContainer && typeof certificates !== "undefined") {
   function render(category) {
@@ -163,7 +167,6 @@ if (certContainer && typeof certificates !== "undefined") {
       category === "all"
         ? certificates
         : certificates.filter((c) => c.category === category);
-
     if (list.length === 0) {
       certContainer.innerHTML = `<p style="text-align:center;padding:2rem;color:var(--text-light)">No certificates found.</p>`;
       return;
@@ -183,8 +186,3 @@ if (certContainer && typeof certificates !== "undefined") {
     });
   });
 }
-
-// =============== BACK TO TOP CLICK ===============
-document.getElementById("backToTop")?.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
