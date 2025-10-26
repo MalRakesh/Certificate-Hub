@@ -26,8 +26,6 @@ const certificates = [
     skills: ["Writing", "Communication", "Business Writing"],
     image: "assets/certs/coursera-emails.jpg",
     pdf: "assets/certs/coursera-emails.pdf",
-    rating: "4.8",
-    enrolled: "1M+",
     verifyUrl: "https://coursera.org/verify/ABC123XYZ" // 👈 Add this
   },
   {
