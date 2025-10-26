@@ -1,80 +1,35 @@
 // js/main.js
 
-// =============== UTILS ===============
-function getThemeFromURL() {
-  return new URLSearchParams(window.location.search).get("theme");
-}
+// =============== THEME TOGGLE (LIKE YOUR OLD PROJECT) ===============
+const themeToggle = document.getElementById("themeToggle");
+const icon = themeToggle?.querySelector("i");
 
-function setThemeInURL(theme) {
-  const url = new URL(window.location);
-  if (theme === "dark") {
-    url.searchParams.set("theme", "dark");
-  } else {
-    url.searchParams.delete("theme");
-  }
-  window.history.replaceState({}, "", url);
-}
+if (themeToggle) {
+  // On Load: Restore saved theme
+  const savedTheme = localStorage.getItem("theme") || "light";
+  document.body.setAttribute(
+    "data-theme",
+    savedTheme === "dark" ? "dark" : "light"
+  );
+  updateThemeIcon(savedTheme === "dark");
 
-// Update ALL internal links to carry current theme
-function updateAllInternalLinks() {
-  const currentTheme = getThemeFromURL();
-  document.querySelectorAll("a[href]").forEach((link) => {
-    if (
-      link.hostname === window.location.hostname &&
-      !link.classList.contains("no-theme")
-    ) {
-      const url = new URL(link.href, window.location.origin);
-      if (currentTheme === "dark") {
-        url.searchParams.set("theme", "dark");
-      } else {
-        url.searchParams.delete("theme");
-      }
-      link.href = url.toString();
-    }
+  // Toggle
+  themeToggle.addEventListener("click", () => {
+    const isDark = document.body.getAttribute("data-theme") === "dark";
+    const newTheme = isDark ? "light" : "dark";
+
+    document.body.setAttribute("data-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+    updateThemeIcon(newTheme === "dark");
   });
 }
 
-function applyTheme(theme) {
-  const isDark = theme === "dark";
-  document.body.setAttribute("data-theme", isDark ? "dark" : "light");
-  updateThemeIcon(isDark);
-  // 👇 Critical: Update links EVERY time theme changes
-  updateAllInternalLinks();
-}
-
 function updateThemeIcon(isDark) {
-  const toggle = document.getElementById("themeToggle");
-  if (!toggle) return;
-  toggle.innerHTML = "";
-  const icon = document.createElement("i");
+  if (!icon) return;
   icon.className = isDark ? "fas fa-sun" : "fas fa-moon";
-  toggle.appendChild(icon);
 }
 
-// =============== INIT THEME ON PAGE LOAD ===============
-(function init() {
-  const urlTheme = getThemeFromURL();
-  const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const finalTheme = urlTheme || (systemDark && !urlTheme ? "dark" : "light");
-  applyTheme(finalTheme);
-})();
-
-// =============== TOGGLE THEME (WORKS EVERY TIME) ===============
-document.addEventListener("click", function (e) {
-  if (e.target.closest("#themeToggle")) {
-    const current =
-      getThemeFromURL() ||
-      (window.matchMedia("(prefers-color-scheme: dark)").matches &&
-      !getThemeFromURL()
-        ? "dark"
-        : "light");
-    const newTheme = current === "dark" ? "light" : "dark";
-    setThemeInURL(newTheme);
-    applyTheme(newTheme);
-  }
-});
-
-// =============== SCROLL PROGRESS + BACK TO TOP ===============
+// =============== OTHER FEATURES (Scroll, Mobile Nav, etc.) ===============
 window.addEventListener("scroll", () => {
   const h = document.documentElement,
     b = document.body,
@@ -93,21 +48,17 @@ document.getElementById("backToTop")?.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
-// =============== MOBILE NAV ===============
 document.getElementById("hamburger")?.addEventListener("click", () => {
   document.querySelector(".nav-links")?.classList.toggle("active");
 });
 
-// =============== CERTIFICATE CARD ===============
+// =============== CERT CARD ===============
 function createCertCard(cert) {
   const card = document.createElement("div");
   card.className = "cert-card";
-
   const skillsHtml = cert.skills
     .map((s) => `<span class="skill-tag">${s}</span>`)
     .join("");
-
-  // Verify button only if verifyUrl exists
   const verifyBtn = cert.verifyUrl
     ? `<a href="${cert.verifyUrl}" target="_blank" class="btn btn-verify">Verify</a>`
     : "";
@@ -141,24 +92,22 @@ function createCertCard(cert) {
 }
 
 function shareCert(id) {
-  const url = `${window.location.origin}${window.location.pathname}?theme=${
-    getThemeFromURL() || "light"
-  }#${id}`;
+  const url = `${window.location.origin}${window.location.pathname}#${id}`;
   navigator.clipboard
     .writeText(url)
     .then(() => alert("Link copied!"))
     .catch(() => prompt("Copy this link:", url));
 }
 
-// =============== HOME PAGE (Preview 4 certs) ===============
+// =============== HOME PAGE ===============
 const homeGrid = document.querySelector(".certificates-grid");
 if (homeGrid && typeof certificates !== "undefined") {
-  certificates.slice(0, 4).forEach((cert) => {
-    homeGrid.appendChild(createCertCard(cert));
-  });
+  certificates
+    .slice(0, 4)
+    .forEach((cert) => homeGrid.appendChild(createCertCard(cert)));
 }
 
-// =============== CERTIFICATES PAGE (Filterable) ===============
+// =============== CERTIFICATES PAGE ===============
 const certContainer = document.getElementById("certContainer");
 if (certContainer && typeof certificates !== "undefined") {
   function render(category) {
