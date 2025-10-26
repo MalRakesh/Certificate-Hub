@@ -233,6 +233,7 @@ header nav {
 .btn-download {
   background: linear-gradient(to right, var(--primary), var(--secondary));
   color: white;
+  text-decoration: none;
 }
 .btn-share {
   background: transparent;
@@ -382,6 +383,7 @@ footer {
   background: transparent;
   color: var(--verified);
   border: 2px solid var(--verified);
+  text-decoration: none;
 }
 .btn-verify:hover {
   background: rgba(0, 200, 150, 0.1);

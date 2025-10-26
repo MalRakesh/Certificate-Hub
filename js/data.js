@@ -10,12 +10,12 @@ const certificates = [
     hours: "40 hours",
     verified: true,
     skills: ["HTML5", "CSS3", "Responsive Design"],
-    image: "assets/certs/html-offline.jpg",
-    pdf: "assets/certs/html-offline.pdf"
+    image: "https://shorturl.at/MqGVQ",
+    pdf: "assets/certs/FAQs.pdf",
     // No verifyUrl → Verify button won't show
   },
   {
-    id: "coursera-emails",
+    id: "coursera-wpeie",
     title: "Write Professional Emails in English",
     issuer: "Georgia Institute of Technology",
     category: "coursera",
@@ -26,20 +26,61 @@ const certificates = [
     skills: ["Writing", "Communication", "Business Writing"],
     image: "assets/certs/coursera-emails.jpg",
     pdf: "assets/certs/coursera-emails.pdf",
-    verifyUrl: "https://coursera.org/verify/ABC123XYZ" // 👈 Add this
+    verifyUrl: "https://coursera.org/verify/ABC123XYZ", // 👈 Add this
   },
   {
-    id: "udemy-js",
-    title: "JavaScript - The Complete Guide",
-    issuer: "Udemy",
-    category: "udemy",
-    platform: "Udemy",
-    date: "Mar 2025",
+    id: "coursera-csf",
+    title: "Customer Service Fundamentals",
+    issuer: "Knowledge Accelerators",
+    category: "coursera",
+    platform: "Coursera",
+    date: "Oct 10 2025",
     verified: true,
-    skills: ["JavaScript", "DOM", "ES6"],
-    image: "assets/certs/udemy-js.jpg",
-    pdf: "assets/certs/udemy-js.pdf",
-    verifyUrl: "https://www.udemy.com/certificate/UC-XXXXXX/" // 👈 Add this
+    skills: [
+      "Customer Relationship Management",
+      "Customer Engagement",
+      "Customer and Client Support",
+      "Technical Support and Services",
+      "Help Desk Support",
+      "Greeting Customers",
+      "Interpersonal Communications",
+      "Customer experience improvement",
+      "Customer Complaint Resolution",
+      "Customer Support",
+      "Process Management",
+      "Empathy",
+    ],
+    image: "https://shorturl.at/tUw8B",
+    pdf: "https://shorturl.at/tUw8B",
+    verifyUrl:
+      "https://www.coursera.org/account/accomplishments/verify/P7S0Y9SHWP4E",
+  },
+  {
+    id: "coursera-sp",
+    title: "Successful Presentation",
+    issuer: "University of Colorado Boulder",
+    category: "coursera",
+    platform: "Coursera",
+    date: "Oct 16 2025",
+    verified: true,
+    skills: [
+      "Public Speaking",
+      "Adaptability",
+      "Non-Verbal Communication",
+      "Drive Engagement",
+      "Communication",
+      "Composure",
+      "Verbal Communication Skills",
+      "Storytelling",
+      "Persuasive Communication",
+      "Business Writing",
+      "Creativity",
+      "Presentations",
+    ],
+    image: "https://shorturl.at/j4uUk",
+    pdf: "https://shorturl.at/j4uUk",
+    verifyUrl:
+      "https://www.coursera.org/account/accomplishments/verify/FUIWXZ70OPAT",
   },
   {
     id: "hackathon-ai",
@@ -51,6 +92,6 @@ const certificates = [
     verified: true,
     skills: ["Python", "AI", "Teamwork"],
     image: "assets/certs/hackathon-ai.jpg",
-    pdf: "assets/certs/hackathon-ai.pdf"
-  }
+    pdf: "assets/certs/hackathon-ai.pdf",
+  },
 ];

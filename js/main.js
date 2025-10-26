@@ -74,14 +74,13 @@ function createCertCard(cert) {
           ? `<div class="hours">${cert.hours} (approximately)</div>`
           : ""
       }
-      ${cert.verified ? `<div class="verified-badge">✅ Verified</div>` : ""}
+      ${cert.verified ? `<div class="verified-badge">Verified</div>` : ""}
       <div class="skills">${skillsHtml}</div>
       <div class="actions">
-        <a href="${cert.pdf}" download class="btn btn-download">Download</a>
+        <a href="${
+          cert.pdf
+        }" target="_blank" download class="btn btn-download">Download</a>
         ${verifyBtn}
-        <button class="btn btn-share" onclick="shareCert('${
-          cert.id
-        }')">Share</button>
       </div>
     </div>
     <div class="cert-preview">
