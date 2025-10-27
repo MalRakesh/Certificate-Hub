@@ -12,7 +12,6 @@ const certificates = [
     skills: ["HTML5", "CSS3", "Responsive Design"],
     image: "https://shorturl.at/MqGVQ",
     pdf: "assets/certs/FAQs.pdf",
-    // No verifyUrl → Verify button won't show
   },
   {
     id: "coursera-wpeie",
@@ -23,10 +22,39 @@ const certificates = [
     date: "Oct 24, 2025",
     hours: "14 hours",
     verified: true,
-    skills: ["Writing", "Communication", "Business Writing"],
-    image: "assets/certs/coursera-emails.jpg",
-    pdf: "assets/certs/coursera-emails.pdf",
-    verifyUrl: "https://coursera.org/verify/ABC123XYZ", // 👈 Add this
+    skills: [
+      "Writing",
+      "Business Correspondence",
+      "Intercultural Competence",
+      "English Language",
+      "Proofreading",
+      "Communication",
+      "Business Writing",
+      "Cultural Sensitivity",
+      "Business Communication",
+      "Editing",
+      "Grammar",
+    ],
+    image: "https://shorturl.at/48NiS",
+    pdf: "https://shorturl.at/48NiS",
+    verifyUrl:
+      "https://www.coursera.org/account/accomplishments/verify/O94TL9C7K47Q",
+  },
+  {
+    id: "coursera-wsnh",
+    title:
+      "Work Smarter, Not Harder: Time Management for Personal & Professional Productivity",
+    issuer: "University of California, Irvine",
+    category: "coursera",
+    platform: "Coursera",
+    date: "Oct 8, 2025",
+    hours: "9 hours",
+    verified: true,
+    skills: ["Professionalism", "Crisis Management", "Planning", "Scheduling"],
+    image: "https://shorturl.at/KrCqh",
+    pdf: "https://shorturl.at/KrCqh",
+    verifyUrl:
+      "https://www.coursera.org/account/accomplishments/verify/M5F8A5NEUK1G",
   },
   {
     id: "coursera-csf",
@@ -81,6 +109,33 @@ const certificates = [
     pdf: "https://shorturl.at/j4uUk",
     verifyUrl:
       "https://www.coursera.org/account/accomplishments/verify/FUIWXZ70OPAT",
+  },
+  {
+    id: "coursera-csf",
+    title: "Customer Service Fundamentals",
+    issuer: "Knowledge Accelerators",
+    category: "coursera",
+    platform: "Coursera",
+    date: "Oct 10 2025",
+    verified: true,
+    skills: [
+      "Greeting Customers",
+      "Help Desk Support",
+      "Interpersonal Communications",
+      "Communication",
+      "Critical Thinking and Problem Solving",
+      "Customer Support",
+      "Customer Engagement",
+      "Customer Complaint Resolution",
+      "Empathy",
+      "Customer and Client Support",
+      "Problem Solving",
+      "Customer Relationship Management",
+    ],
+    image: "https://shorturl.at/AAxvi",
+    pdf: "https://shorturl.at/AAxvi",
+    verifyUrl:
+      "https://www.coursera.org/account/accomplishments/verify/P7S0Y9SHWP4E",
   },
   {
     id: "hackathon-ai",
